@@ -4,13 +4,14 @@ from time import sleep,clock,time
 from scipy.stats import expon
 
 class HealthMonitor(Process):
-	def __init__(self, monitor_pipe, signal_pipe_monitor_end):
+	def __init__(self, monitor_pipe, signal_pipe_monitor_end, beaver_shark_q):
 		Process.__init__(self)
 		self.monitor_pipe= monitor_pipe
 		self.signal_pipe= signal_pipe_monitor_end
 		self.hb_intervals = [0]
 		self.last_hb = time()
 		self.seen = 0
+		self.beaver_shark_q= beaver_shark_q
 		
 
 	def run(self):
@@ -38,3 +39,4 @@ class HealthMonitor(Process):
 			return 1
 
 
+	

@@ -7,25 +7,26 @@ from TwitterAPI import TwitterAPI
 from multiprocessing import Process, Pipe
 from time import clock,time
 
-
+from monitors import HealthMonitor
 
 class TwitterStreamer(Process):
-	def __init__(self, query, creds,tweet_pipe,hb_pipe):
+	def __init__(self, query, creds, hb_pipe_streamer_end, tweet_pipe_streamer_end, beaver_shark_q):
 		Process.__init__(self)
 		self.creds= creds
-		self.tweet_pipe = tweet_pipe
-		self.hb_pipe= hb_pipe	
 		self.query= ''
 		self.query_string = ''
 		self.p_of_life = 1		
 		self.streamer= None
 		self.updateQuery(query)
+		self.hb_pipe_streamer_end= hb_pipe_streamer_end
+		self.tweet_pipe_streamer_end= tweet_pipe_streamer_end
+		self.beaver_shark_q= beaver_shark_q
 	
 	def run(self):
-		print 'Starting now.'
+		self.beaver_shark_q.put(['info','Starting Streamer now.'])
 		self.makeHandshake()
 		self.sipFromStream()
-		print 'Exited Gracefully.'
+		self.beaver_shark_q.put(['info','Streamer has exited gracefully.'])
 		
 
 	def makeHandshake(self):
@@ -35,12 +36,15 @@ class TwitterStreamer(Process):
 								self.creds['access_token_secret'])
 		
 	def sipFromStream(self):
-		print 'Entering Stream.'
+		self.beaver_shark_q.put(['info','Entered Stream.'])
 		self.streamer = self.api.request('statuses/filter', {'track': self.query_string, 'language': 'en'})
-		print 'Connection established.'
+		self.beaver_shark_q.put(['info','Stream connection established.'])
 		for tweet in self.streamer.get_iterator():
-			self.hb_pipe.send([time(),self.streamer.status_code])
-			self.tweet_pipe.send(tweet)
+			try:
+				self.hb_pipe_streamer_end.send([time(),self.streamer.status_code])
+				self.tweet_pipe_streamer_end.send(tweet)
+			except Exception as e:
+				self.beaver_shark_q.put(['exception',e])
 
 	def updateQuery(self, new_query):
 		self.query = new_query
@@ -56,4 +60,6 @@ class TwitterStreamer(Process):
 			self.query_string= self.query_string+ ',' + self.query[sub_c]
 			#self.count_extended[sub_c] = {}   Old Tracking code
 		self.query_string= self.query_string[1:] ## This clips the leading comma
+
+
 
