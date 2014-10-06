@@ -2,7 +2,7 @@ from multiprocessing import freeze_support
 import logging
 
 from mysharky.sharky import Sharky
-from mysharky.prebuilt_sharky_writer_connections import mongo_writer
+from mysharky.prebuilt_sharky_writer_connections import mongo_writer, csv_writer
 
 
 #### Twitter Creds #####
@@ -26,7 +26,7 @@ TWITTER_CREDS= {
 }
 
 
-WRITERS = [mongo_writer]
+WRITERS = [mongo_writer, csv_writer]
 
 logging.basicConfig(filename=LOG_FILE, level= LOG_LEVEL, format='%(asctime)s:%(levelname)s: %(message)s')
 
