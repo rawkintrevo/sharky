@@ -12,8 +12,8 @@ def patientIsHealthy(signal_pipe_sensor_end, logging):
 			### Check Pulse
 			if time() - new_data[0] > MAX_TIME_BEFORE_RESTART:   ## The 'no pulse' case
 				minutes_since_last_hb= str(int(round((time()-new_data[0])/60)))
-				logging.warn("""%i minutes since last streamer heartbeat...
-								restarting streamer and monitor""" %minutes_since_last_hb)	
+				logging.warn("""%s minutes since last streamer heartbeat...
+								restarting streamer and monitor""" % minutes_since_last_hb)	
 				return False			
 			### Check Stream for General Failure
 			if new_data[3] != 200:    ## The streamer has failed case. 

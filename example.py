@@ -1,9 +1,12 @@
-from mysharky.sharky import Sharky
 from multiprocessing import freeze_support
 import logging
 
+from mysharky.sharky import Sharky
+from mysharky.prebuilt_sharky_writer_connections import mongo_writer
+
 
 #### Twitter Creds #####
+
 API_KEY= 'xxx'
 API_SECRET= 'yyy'
 ACCESS_TOKEN= 'zzz'
@@ -23,17 +26,9 @@ TWITTER_CREDS= {
 }
 
 
-##  TODO Make connections an entire class, with a write method, batch write, processor, etc..
-def mongo_conn(self):
-		from pymongo import MongoClient
-		m= MongoClient()['shark']['test']
-		return m	
+WRITERS = [mongo_writer]
 
-WRITERS = [('mongodb', mongo_conn)]
-
-
-
-logging.basicConfig(filename=LOG_FILE, level= LOG_LEVEL)
+logging.basicConfig(filename=LOG_FILE, level= LOG_LEVEL, format='%(asctime)s:%(levelname)s: %(message)s')
 
 
 

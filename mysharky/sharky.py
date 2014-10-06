@@ -52,16 +52,15 @@ class Sharky():
 		logging.info('Connecting pipes, queues, writers, and processors...')
 		for w in range(0,len(self.writers)):
 			try:			
-				target_type= self.writers[w][0]
-				conn_fn=  self.writers[w][1]
+				sharky_writer_conn= self.writers[w]
 				reseviors.append(Queue())
 				male,female = Pipe()
 				writer_health_pipe_recv_side.append(female)
 				writer_health_pipe_send_side.append(male)
-				logging.info('Creating %s',target_type)
-				sharky_processors.append(TwitterProcessor(self.query, tweet_pipe_processor_end, target_type, reseviors[w], beaver_shark_q))
+				logging.info('Creating %s', sharky_writer_conn.name)
+				sharky_processors.append(TwitterProcessor(self.query, tweet_pipe_processor_end, sharky_writer_conn, reseviors[w], beaver_shark_q))
 				logging.info('Processor successfully created')			
-				sharky_writers.append(SharkyWriter(reseviors[w],writer_health_pipe_send_side[w], target_type, conn_fn, beaver_shark_q))
+				sharky_writers.append(SharkyWriter(reseviors[w],writer_health_pipe_send_side[w], sharky_writer_conn, beaver_shark_q))
 				logging.info('Writer successfully created')			
 			except Exception as e:
 				logging.exception(e)
