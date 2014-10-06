@@ -3,6 +3,25 @@ from numpy import mean
 from time import sleep,clock,time
 from scipy.stats import expon
 
+
+def patientIsHealthy(signal_pipe_sensor_end, logging):
+		MAX_TIME_BEFORE_RESTART = 60*2
+		if signal_pipe_sensor_end.poll():
+			while signal_pipe_sensor_end.poll():
+				new_data = signal_pipe_sensor_end.recv()	#### Burn through everyting waiting in the pipe and just get the last hb
+			### Check Pulse
+			if time() - new_data[0] > MAX_TIME_BEFORE_RESTART:   ## The 'no pulse' case
+				minutes_since_last_hb= str(int(round((time()-new_data[0])/60)))
+				logging.warn("""%i minutes since last streamer heartbeat...
+								restarting streamer and monitor""" %minutes_since_last_hb)	
+				return False			
+			### Check Stream for General Failure
+			if new_data[3] != 200:    ## The streamer has failed case. 
+				logging.warn('status code of streamer -- %s -- restarting.' %  str(new_data[3]) )
+				return False
+		else:
+			return True
+
 class HealthMonitor(Process):
 	def __init__(self, monitor_pipe, signal_pipe_monitor_end, beaver_shark_q):
 		Process.__init__(self)
