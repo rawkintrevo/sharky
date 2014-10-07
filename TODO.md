@@ -14,3 +14,4 @@
 
 ## Health Checks
 - [ ] Canary Test (Make sure data is being written to target)
+- [ ] Streamer keeps getting restart signals, but IDK why.  Need to update logging to record why streamer is failing. 
