@@ -10,7 +10,9 @@
 - [ ] If more than one writer is used then all tweets end up going to the first writer. Need to have a handler to repeate tweets to all writers. 
 
 ## Streamers
-- [ ] Datasift
+- [ ] Make streamers modular like writer.  
+- [ ] Make Spyder module
+- [ ] Datasift module
 
 ## Health Checks
 - [ ] Canary Test (Make sure data is being written to target)
